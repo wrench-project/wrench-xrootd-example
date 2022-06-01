@@ -57,10 +57,10 @@ namespace wrench {
 			wrench::Simulation::addFile("file4", 1 * GBYTE),
 		};
         
-        wrench::Simulation::createFile(files[0], root->getChild(0));
-		wrench::Simulation::createFile(files[1], root->getChild(1));
-		wrench::Simulation::createFile(files[2], root->getChild(2)->getChild(0));
-		wrench::Simulation::createFile(files[3], root->getChild(2)->getChild(1));
+        wrench::Simulation::createFile(files[0], root->getChild(0)->getStorageServer());
+		wrench::Simulation::createFile(files[1], root->getChild(1)->getStorageServer());
+		wrench::Simulation::createFile(files[2], root->getChild(2)->getChild(0)->getStorageServer());
+		wrench::Simulation::createFile(files[3], root->getChild(2)->getChild(1)->getStorageServer());
 
         /* Create a job manager so that we can create/submit jobs */
         auto job_manager = this->createJobManager();
