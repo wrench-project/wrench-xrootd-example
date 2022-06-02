@@ -67,10 +67,10 @@ namespace wrench {
 
         WRENCH_INFO("Creating a compound job with an assortment of file reads");
         auto job1 = job_manager->createCompoundJob("job1");
-        auto fileread1 = job1->addFileReadAction("fileread", files[0], root);
-		auto fileread2 = job1->addFileReadAction("fileread", files[1], root);
-		auto fileread3 = job1->addFileReadAction("fileread", files[2], root);
-		auto fileread4 = job1->addFileReadAction("fileread", files[3], root);
+        auto fileread1 = job1->addFileReadAction("fileread1", files[0], root);
+		auto fileread2 = job1->addFileReadAction("fileread2", files[1], root);
+		auto fileread3 = job1->addFileReadAction("fileread3", files[2], root);
+		auto fileread4 = job1->addFileReadAction("fileread4", files[3], root);
 
         auto compute = job1->addComputeAction("compute", 100 * GFLOP, 50 * MBYTE, 1, 3, wrench::ParallelModel::AMDAHL(0.8));
         job1->addActionDependency(fileread1, compute);
