@@ -53,7 +53,7 @@ namespace wrench {
         std::vector<std::shared_ptr<DataFile>> files ={ 
 			wrench::Simulation::addFile("file1", 1 * GBYTE),
 			wrench::Simulation::addFile("file2", 1 * GBYTE),
-			wrench::Simulation::addFile("file3", 1 * GBYTE),
+			wrench::Simulation::addFile("file3", 100 * GBYTE),
 			wrench::Simulation::addFile("file4", 1 * GBYTE),
 		};
         
@@ -80,7 +80,7 @@ namespace wrench {
         
         
         job_manager->submitJob(job1, this->bare_metal_compute_service);
-        
+        this->waitForAndProcessNextEvent();
 
         WRENCH_INFO("Execution complete!");
 
