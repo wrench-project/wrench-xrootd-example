@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 	leaf=xrootdManager.createStorageServer("Boivin",{},{});
 	activeNode->addChild(leaf);
     /* Launch the simulation */
-	auto controller = simulation->add(        new wrench::Controller(baremetal_service, root, "Fafard"));
+	auto controller = simulation->add(        new wrench::Controller(baremetal_service, root,&xrootdManager, "Fafard"));
     simulation->launch();
 
     return 0;
