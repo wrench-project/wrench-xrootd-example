@@ -51,34 +51,54 @@ int main(int argc, char **argv) {
     //auto storage_service = simulation->add(new wrench::SimpleStorageService("StorageHost", {"/"}, {}, {}));
 
     /* Instantiate a bare-metal compute service on the platform */
-    auto baremetal_service = simulation->add(new wrench::BareMetalComputeService("Fafard", {"Fafard"}, "", {}, {}));
+    auto baremetal_service = simulation->add(new wrench::BareMetalComputeService("user", {"user"}, "", {}, {}));
 	simulation->add(baremetal_service);
 
     /* Instantiate an execution controller */
     
 	/*Construct XRootD tree that looks like
-	             Ginette
-	          /     |     \ 	
-	 Timberlay Jacquellin  Jupiter
-	                      /       \ 	
-	                  Bourassa   Boivin
+		    Root
+	     /   |   \ 	
+	Leaf1  Leaf2  Super1			
+				 /   |   \ 	
+			Leaf3  Leaf4  Super2
+						 /   |   \ 	
+					Leaf5  Leaf6  Super3
+								 /   |   \ 	
+							Leaf7  Leaf8  Super4
+										 /   |   \ 	
+									Leaf9  Leaf10  Super11
+	        
 	*/
 	wrench::XRootD::XRootD xrootdManager(simulation);
-	std::shared_ptr<wrench::XRootD::Node> root=xrootdManager.createSupervisor("Ginette");
-	std::shared_ptr<wrench::XRootD::Node> activeNode=xrootdManager.createStorageServer("Tremblay",{},{});
+	std::shared_ptr<wrench::XRootD::Node> root=xrootdManager.createSupervisor("root");
+	root->addChild(xrootdManager.createStorageServer("leaf1",{},{}));
+	root->addChild(xrootdManager.createStorageServer("leaf2",{},{}));
+	std::shared_ptr<wrench::XRootD::Node> activeNode=xrootdManager.createSupervisor("super1");
 	root->addChild(activeNode);
-	activeNode=xrootdManager.createStorageServer("Jacquelin",{},{});
-	root->addChild(activeNode);
-	activeNode=xrootdManager.createSupervisor("Jupiter");
-	root->addChild(activeNode);
+	activeNode->addChild(xrootdManager.createStorageServer("leaf3",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf4",{},{}));
+	std::shared_ptr<wrench::XRootD::Node> previousNode=activeNode;
+	activeNode=xrootdManager.createSupervisor("super2");
+	previousNode->addChild(activeNode);
+	activeNode->addChild(xrootdManager.createStorageServer("leaf5",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf6",{},{}));
+	previousNode=activeNode;
+	activeNode=xrootdManager.createSupervisor("super3");
+	previousNode->addChild(activeNode);
+	activeNode->addChild(xrootdManager.createStorageServer("leaf7",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf8",{},{}));
+	previousNode=activeNode;
+	activeNode=xrootdManager.createSupervisor("super4");
+	previousNode->addChild(activeNode);
+	activeNode->addChild(xrootdManager.createStorageServer("leaf9",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf10",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf11",{},{}));
 	
-	std::shared_ptr<wrench::XRootD::Node> leaf=xrootdManager.createStorageServer("Bourassa",{},{});
-	activeNode->addChild(leaf);
-	leaf=xrootdManager.createStorageServer("Boivin",{},{});
-	activeNode->addChild(leaf);
-    /* Launch the simulation */
-	auto controller = simulation->add(        new wrench::Controller(baremetal_service, root,&xrootdManager, "Fafard"));
+	/* Launch the simulation */
+	auto controller = simulation->add(        new wrench::Controller(baremetal_service, root,&xrootdManager, "root"));
     simulation->launch();
 
     return 0;
-}
+	
+	}
