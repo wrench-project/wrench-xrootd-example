@@ -2,219 +2,397 @@
 <!DOCTYPE platform SYSTEM "https://simgrid.org/simgrid.dtd">
 <platform version="4.1">
   <zone id="zone0" routing="Full">
-    <host id="Tremblay" speed="98.095Mf">
+    <host id="leaf1" speed="1Mf">
    		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
                 <prop id="size" value="5000GiB"/>
                 <prop id="mount" value="/"/>
             </disk>
     </host>
-    <host id="Jupiter" speed="76.296Mf"/>
-    <host id="Fafard" speed="76.296Mf"/>
-    <host id="Ginette" speed="48.492Mf"/>
-    <host id="Bourassa" speed="48.492Mf">
-    	<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+	<host id="leaf2" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
                 <prop id="size" value="5000GiB"/>
                 <prop id="mount" value="/"/>
             </disk>
     </host>
-    <host id="Jacquelin" speed="137.333Mf">
-    	<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+	<host id="leaf3" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
                 <prop id="size" value="5000GiB"/>
                 <prop id="mount" value="/"/>
             </disk>
     </host>
-    <host id="Boivin" speed="98.095Mf">
-    	<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+	<host id="leaf4" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
                 <prop id="size" value="5000GiB"/>
                 <prop id="mount" value="/"/>
             </disk>
     </host>
+	<host id="leaf5" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+                <prop id="size" value="5000GiB"/>
+                <prop id="mount" value="/"/>
+            </disk>
+    </host>
+	<host id="leaf6" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+                <prop id="size" value="5000GiB"/>
+                <prop id="mount" value="/"/>
+            </disk>
+    </host>
+	<host id="leaf7" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+                <prop id="size" value="5000GiB"/>
+                <prop id="mount" value="/"/>
+            </disk>
+    </host>
+	<host id="leaf8" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+                <prop id="size" value="5000GiB"/>
+                <prop id="mount" value="/"/>
+            </disk>
+    </host>
+	<host id="leaf9" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+                <prop id="size" value="5000GiB"/>
+                <prop id="mount" value="/"/>
+            </disk>
+    </host>
+	<host id="leaf10" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+                <prop id="size" value="5000GiB"/>
+                <prop id="mount" value="/"/>
+            </disk>
+    </host>
+	<host id="leaf11" speed="1Mf">
+   		<disk id="hard_drive" read_bw="100MBps" write_bw="100MBps">
+                <prop id="size" value="5000GiB"/>
+                <prop id="mount" value="/"/>
+            </disk>
+    </host>
+    <host id="root" speed="1Mf"/>
+    <host id="super1" speed="1Mf"/>
+    <host id="super2" speed="1Mf"/>
+    <host id="super3" speed="1Mf"/>
+    <host id="super4" speed="1Mf"/>
 
-    <link id="6" bandwidth="41.279125MBps" latency="59.904us"/>
-    <link id="3" bandwidth="34.285625MBps" latency="514.433us"/>
-    <link id="7" bandwidth="11.618875MBps" latency="189.98us"/>
-    <link id="9" bandwidth="7.20975MBps" latency="1.461517ms"/>
-    <link id="2" bandwidth="118.6825MBps" latency="136.931us"/>
-    <link id="8" bandwidth="8.158MBps" latency="270.544us"/>
-    <link id="1" bandwidth="34.285625MBps" latency="514.433us"/>
-    <link id="4" bandwidth="10.099625MBps" latency="479.78us"/>
-    <link id="0" bandwidth="41.279125MBps" latency="59.904us"/>
-    <link id="5" bandwidth="27.94625MBps" latency="278.066us"/>
-    <link id="145" bandwidth="2.583375MBps" latency="410.463us"/>
-    <link id="10" bandwidth="34.285625MBps" latency="514.433us"/>
-    <link id="11" bandwidth="118.6825MBps" latency="136.931us"/>
-    <link id="16" bandwidth="34.285625MBps" latency="514.433us"/>
-    <link id="17" bandwidth="118.6825MBps" latency="136.931us"/>
-    <link id="44" bandwidth="10.314625MBps" latency="6.932556ms"/>
-    <link id="47" bandwidth="10.314625MBps" latency="6.932556ms"/>
-    <link id="54" bandwidth="15.376875MBps" latency="35.083019ms"/>
-    <link id="56" bandwidth="21.41475MBps" latency="29.5890617ms"/>
-    <link id="59" bandwidth="11.845375MBps" latency="370.788us"/>
-    <link id="78" bandwidth="27.94625MBps" latency="278.066us"/>
-    <link id="79" bandwidth="8.42725MBps" latency="156.056us"/>
-    <link id="80" bandwidth="15.376875MBps" latency="35.083019ms"/>
+    <host id="user" speed="10Mf"/>
+    
+    <link id="1" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="2" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="3" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="4" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="5" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="6" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="7" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="8" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="9" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="10" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="11" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="12" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="13" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="14" bandwidth="0.01MBps" latency="50ms"/>
+	<link id="15" bandwidth="0.01MBps" latency="50ms"/>
+    <link id="16" bandwidth="300MBps" latency="100ms"/>
     <link id="loopback" bandwidth="498MBps" latency="15us" sharing_policy="FATPIPE"/>
 
-    <route src="Tremblay" dst="Tremblay">
+    <route src="leaf1" dst="leaf1">
       <link_ctn id="loopback"/>
     </route>
-    <route src="Jupiter" dst="Jupiter">
+    <route src="leaf2" dst="leaf2">
       <link_ctn id="loopback"/>
     </route>
-    <route src="Fafard" dst="Fafard">
+	<route src="leaf3" dst="leaf3">
       <link_ctn id="loopback"/>
     </route>
-    <route src="Ginette" dst="Ginette">
+	<route src="leaf4" dst="leaf4">
       <link_ctn id="loopback"/>
     </route>
-    <route src="Bourassa" dst="Bourassa">
+	<route src="leaf5" dst="leaf5">
       <link_ctn id="loopback"/>
     </route>
-	<route src="Jacquelin" dst="Jacquelin">
+	<route src="leaf6" dst="leaf6">
       <link_ctn id="loopback"/>
     </route>
-	<route src="Boivin" dst="Boivin">
+	<route src="leaf7" dst="leaf7">
       <link_ctn id="loopback"/>
     </route>
-    <route src="Tremblay" dst="Jupiter">
-      <link_ctn id="9"/>
+	<route src="leaf8" dst="leaf8">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Tremblay" dst="Fafard">
-      <link_ctn id="4"/>
-      <link_ctn id="3"/>
-      <link_ctn id="2"/>
-      <link_ctn id="0"/>
-      <link_ctn id="1"/>
-      <link_ctn id="8"/>
+	<route src="leaf9" dst="leaf9">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Tremblay" dst="Ginette">
-      <link_ctn id="4"/>
-      <link_ctn id="3"/>
-      <link_ctn id="5"/>
+	<route src="leaf10" dst="leaf10">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Tremblay" dst="Bourassa">
-      <link_ctn id="4"/>
-      <link_ctn id="3"/>
-      <link_ctn id="2"/>
-      <link_ctn id="0"/>
-      <link_ctn id="1"/>
-      <link_ctn id="6"/>
-      <link_ctn id="7"/>
+	<route src="leaf11" dst="leaf11">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Jupiter" dst="Fafard">
-      <link_ctn id="9"/>
-      <link_ctn id="4"/>
-      <link_ctn id="3"/>
-      <link_ctn id="2"/>
-      <link_ctn id="0"/>
-      <link_ctn id="1"/>
-      <link_ctn id="8"/>
+	<route src="root" dst="root">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Jupiter" dst="Bourassa">
-      <link_ctn id="9"/>
-      <link_ctn id="4"/>
-      <link_ctn id="3"/>
-      <link_ctn id="2"/>
-      <link_ctn id="0"/>
-      <link_ctn id="1"/>
-      <link_ctn id="6"/>
-      <link_ctn id="7"/>
+	<route src="user" dst="user">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Fafard" dst="Ginette">
-      <link_ctn id="8"/>
-      <link_ctn id="1"/>
-      <link_ctn id="0"/>
-      <link_ctn id="2"/>
-      <link_ctn id="5"/>
+	<route src="super1" dst="super1">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Jupiter" dst="Jacquelin">
-      <link_ctn id="145"/>
+	<route src="super2" dst="super2">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Jupiter" dst="Boivin">
-      <link_ctn id="47"/>
+	<route src="super3" dst="super3">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Jupiter" dst="Ginette">
-      <link_ctn id="9"/>
-      <link_ctn id="4"/>
-      <link_ctn id="3"/>
-      <link_ctn id="5"/>
+	<route src="super4" dst="super4">
+      <link_ctn id="loopback"/>
     </route>
-    <route src="Fafard" dst="Bourassa">
-      <link_ctn id="8"/>
-      <link_ctn id="6"/>
-      <link_ctn id="7"/>
-    </route>
-    <route src="Ginette" dst="Bourassa">
-      <link_ctn id="5"/>
-      <link_ctn id="2"/>
-      <link_ctn id="0"/>
-      <link_ctn id="1"/>
-      <link_ctn id="6"/>
-      <link_ctn id="7"/>
-    </route>
-    <route src="Ginette" dst="Jacquelin">
-      <link_ctn id="145"/>
-    </route>
-    <route src="Ginette" dst="Boivin">
-      <link_ctn id="47"/>
-    </route>
-    <route src="Bourassa" dst="Jacquelin">
-      <link_ctn id="145"/>
-    </route>
-    <route src="Bourassa" dst="Boivin">
-      <link_ctn id="47"/>
-    </route>
-    <route src="Jacquelin" dst="Boivin">
-      <link_ctn id="145"/>
-      <link_ctn id="59"/>
-      <link_ctn id="56"/>
-      <link_ctn id="54"/>
-      <link_ctn id="17"/>
+	
+    <route src="leaf1" dst="user">
       <link_ctn id="16"/>
-      <link_ctn id="10"/>
-      <link_ctn id="11"/>
-      <link_ctn id="44"/>
-      <link_ctn id="47"/>
     </route>
-    <route src="Jacquelin" dst="Fafard">
-      <link_ctn id="145"/>
-      <link_ctn id="59"/>
-      <link_ctn id="56"/>
-      <link_ctn id="54"/>
-      <link_ctn id="17"/>
+	<route src="leaf2" dst="user">
       <link_ctn id="16"/>
-      <link_ctn id="10"/>
-      <link_ctn id="6"/>
-      <link_ctn id="9"/>
-      <link_ctn id="79"/>
-      <link_ctn id="78"/>
     </route>
-    <route src="Jacquelin" dst="Tremblay">
-      <link_ctn id="145"/>
-      <link_ctn id="59"/>
-      <link_ctn id="56"/>
-      <link_ctn id="54"/>
+	<route src="leaf3" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="leaf4" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="leaf5" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="leaf6" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="leaf7" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="leaf8" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="leaf9" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="leaf10" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="leaf11" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="root" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="super1" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="super2" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="super3" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	<route src="super4" dst="user">
+      <link_ctn id="16"/>
+    </route>
+	
+	<route src="leaf1" dst="root">
+      <link_ctn id="1"/>
+    </route>
+	<route src="leaf2" dst="root">
       <link_ctn id="2"/>
-      <link_ctn id="3"/>
     </route>
-    <route src="Boivin" dst="Tremblay">
-      <link_ctn id="47"/>
-      <link_ctn id="44"/>
-      <link_ctn id="11"/>
+	<route src="leaf3" dst="super1">
+      <link_ctn id="4"/>
+    </route>
+	<route src="leaf4" dst="super1">
+      <link_ctn id="5"/>
+    </route>
+	<route src="leaf5" dst="super2">
+      <link_ctn id="7"/>
+    </route>
+	<route src="leaf6" dst="super2">
+      <link_ctn id="8"/>
+    </route>
+	<route src="leaf7" dst="super3">
       <link_ctn id="10"/>
-      <link_ctn id="16"/>
-      <link_ctn id="0"/>
+    </route>
+	<route src="leaf8" dst="super3">
+      <link_ctn id="11"/>
+    </route>
+	<route src="leaf9" dst="super4">
+      <link_ctn id="13"/>
+    </route>
+	<route src="leaf10" dst="super4">
+      <link_ctn id="14"/>
+    </route>
+	<route src="leaf11" dst="super4">
+      <link_ctn id="15"/>
+    </route>
+	<route src="root" dst="super1">
       <link_ctn id="3"/>
     </route>
-    <route src="Boivin" dst="Fafard">
-      <link_ctn id="47"/>
-      <link_ctn id="44"/>
-      <link_ctn id="11"/>
+	<route src="super1" dst="super2">
+      <link_ctn id="6"/>
+    </route>
+	<route src="super2" dst="super3">
+      <link_ctn id="9"/>
+    </route>
+	<route src="super3" dst="super4">
+      <link_ctn id="12"/>
+    </route>
+	
+	<route src="root" dst="super2">
+      <link_ctn id="3"/>
+      <link_ctn id="6"/>
+    </route>
+	<route src="super1" dst="super3">
       <link_ctn id="6"/>
       <link_ctn id="9"/>
-      <link_ctn id="79"/>
-      <link_ctn id="78"/>
-      <link_ctn id="80"/>
+    </route>
+	<route src="super2" dst="super4">
+      <link_ctn id="9"/>
+      <link_ctn id="12"/>
+    </route>
+	<route src="leaf3" dst="root">
+      <link_ctn id="4"/>
+	  <link_ctn id="3"/>
+    </route>
+	<route src="leaf4" dst="root">
+      <link_ctn id="5"/>
+	  <link_ctn id="3"/>
+    </route>
+	<route src="leaf5" dst="super1">
+      <link_ctn id="7"/>
+	  <link_ctn id="6"/>
+    </route>
+	<route src="leaf6" dst="super1">
+      <link_ctn id="8"/>
+	  <link_ctn id="6"/>
+    </route>
+	<route src="leaf7" dst="super2">
+      <link_ctn id="10"/>
+	  <link_ctn id="9"/>
+    </route>
+	<route src="leaf8" dst="super2">
+      <link_ctn id="11"/>
+	  <link_ctn id="9"/>
+    </route>
+	<route src="leaf9" dst="super3">
+      <link_ctn id="13"/>
+	  <link_ctn id="12"/>
+    </route>
+	<route src="leaf10" dst="super3">
+      <link_ctn id="14"/>
+	  <link_ctn id="12"/>
+    </route>
+	<route src="leaf11" dst="super3">
+      <link_ctn id="15"/>
+	  <link_ctn id="12"/>
+    </route>
+    
+	<route src="root" dst="super3">
+      <link_ctn id="3"/>
+      <link_ctn id="6"/>
+      <link_ctn id="9"/>
+    </route>
+	<route src="super1" dst="super4">
+      <link_ctn id="6"/>
+      <link_ctn id="9"/>
+      <link_ctn id="12"/>
+    </route>
+	<route src="leaf5" dst="root">
+      <link_ctn id="7"/>
+	  <link_ctn id="6"/>
+	  <link_ctn id="3"/>
+    </route>
+	<route src="leaf6" dst="root">
+      <link_ctn id="8"/>
+	  <link_ctn id="6"/>
+	  <link_ctn id="3"/>
+    </route>
+	<route src="leaf7" dst="super1">
+      <link_ctn id="10"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+    </route>
+	<route src="leaf8" dst="super1">
+      <link_ctn id="11"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+    </route>
+	<route src="leaf9" dst="super2">
+      <link_ctn id="13"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+    </route>
+	<route src="leaf10" dst="super2">
+      <link_ctn id="14"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+    </route>
+	<route src="leaf11" dst="super2">
+      <link_ctn id="15"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+    </route>
+	
+	<route src="root" dst="super4">
+      <link_ctn id="3"/>
+      <link_ctn id="6"/>
+      <link_ctn id="9"/>
+      <link_ctn id="12"/>
+    </route>
+	<route src="leaf7" dst="root">
+      <link_ctn id="10"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+	  <link_ctn id="3"/>
+    </route>
+	<route src="leaf8" dst="root">
+      <link_ctn id="11"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+	  <link_ctn id="3"/>
+    </route>
+	<route src="leaf9" dst="super1">
+      <link_ctn id="13"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+    </route>
+	<route src="leaf10" dst="super1">
+      <link_ctn id="14"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+    </route>
+	<route src="leaf11" dst="super1">
+      <link_ctn id="15"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+    </route>
+	
+	<route src="leaf9" dst="root">
+      <link_ctn id="13"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+	  <link_ctn id="3"/>
+    </route>
+	<route src="leaf10" dst="root">
+      <link_ctn id="14"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+	  <link_ctn id="3"/>
+    </route>
+	<route src="leaf11" dst="root">
+      <link_ctn id="15"/>
+	  <link_ctn id="12"/>
+	  <link_ctn id="9"/>
+	  <link_ctn id="6"/>
+	  <link_ctn id="3"/>
     </route>
   </zone>
 </platform>
