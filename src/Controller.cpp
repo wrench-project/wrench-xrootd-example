@@ -64,6 +64,8 @@ namespace wrench {
 			wrench::Simulation::addFile("file10", 1 ),
 			wrench::Simulation::addFile("file11", 1),
 			wrench::Simulation::addFile("file12", 1 ),
+			wrench::Simulation::addFile("file13", 1 ),
+			wrench::Simulation::addFile("file14", 1 ),
 		};
         
 			
@@ -78,6 +80,10 @@ namespace wrench {
 		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(0)->createFile(files[8]);//leaf 9
 		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(1)->createFile(files[9]);//leaf 10
 		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2)->createFile(files[10]);//leaf 11
+		
+		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2)->createFile(files[12]);//File for supervisor tests
+		
+		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2)->createFile(files[13]);//File for direct tests
 	//  root  super1       super2       super3       super4       
         /* Create a job manager so that we can create/submit jobs */
         auto job_manager = this->createJobManager();
@@ -98,9 +104,16 @@ namespace wrench {
 		auto fileread12 = job1->addFileReadAction("fileread12", files[11], root);//this file does not exist
 		auto fileread13 = job1->addFileReadAction("fileread13", files[10], root);//depth 4 search, but cached
 		
+		
+		
 		auto fileread14 = job1->addFileReadAction("fileread14", files[11], root);//this file does not exist
-
-        auto compute = job1->addComputeAction("compute", 100 * GFLOP, 50 * MBYTE, 1, 3, wrench::ParallelModel::AMDAHL(0.8));
+		
+		auto fileread15 = job1->addFileReadAction("fileread15", files[10], root);//depth 4 search, but no longer cached
+		auto fileread16 = job1->addFileReadAction("fileread16", files[12], root->getChild(2)->getChild(2)->getChild(2)->getChild(2));//check superviosor
+		auto fileread17 = job1->addFileReadAction("fileread17", files[12], root->getChild(2)->getChild(2)->getChild(2)->getChild(2));//check superviosor cached
+		auto fileread18 = job1->addFileReadAction("fileread18", files[13], root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2));//direct
+		auto fileread19 = job1->addFileReadAction("fileread19", files[13], root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2));//direct cached
+        auto compute = job1->addComputeAction("compute", 10000 * GFLOP, 50 * MBYTE, 1, 3, wrench::ParallelModel::AMDAHL(0.8));//should invalidate cache
         job1->addActionDependency(fileread1, fileread2);
         job1->addActionDependency(fileread2, fileread3);
         job1->addActionDependency(fileread3, fileread4);
@@ -115,16 +128,23 @@ namespace wrench {
 		job1->addActionDependency(fileread13,compute);
         job1->addActionDependency(compute, fileread12);
 		
+        job1->addActionDependency(compute, fileread15);
+		
         job1->addActionDependency(fileread12, fileread14);//this task should never start
         
-        
+		
+        job1->addActionDependency(fileread15, fileread16);
+        job1->addActionDependency(fileread16, fileread17);
+        job1->addActionDependency(fileread17, fileread18);
+		
+        job1->addActionDependency(fileread18, fileread19);
         job_manager->submitJob(job1, this->bare_metal_compute_service);
         this->waitForAndProcessNextEvent();
 
         WRENCH_INFO("Execution complete!");
 
-        std::vector<std::shared_ptr<wrench::Action>> actions = {fileread1, fileread2, fileread3, fileread4,fileread5,fileread6,fileread7,fileread8,fileread9,fileread10,fileread11,fileread12,fileread13,fileread14,compute};
-		std::vector<std::string> comments={"should be fast","should be fast","depth 1 search","depth 1 search","depth 2 search","depth 2 search","depth 3 search","depth 3 search","depth 4 search","depth 4 search","depth 4 search","This file Does not exist","Depth 4, BUT cached","This action should not run","Just a compute"};
+        std::vector<std::shared_ptr<wrench::Action>> actions = {fileread1, fileread2, fileread3, fileread4,fileread5,fileread6,fileread7,fileread8,fileread9,fileread10,fileread11,fileread12,fileread13,fileread14,fileread15,fileread16,fileread17,fileread18,fileread19,compute};
+		std::vector<std::string> comments={"should be fast","should be fast","depth 1 search","depth 1 search","depth 2 search","depth 2 search","depth 3 search","depth 3 search","depth 4 search","depth 4 search","depth 4 search","This file Does not exist","Depth 4, BUT cached","This action should not run","depth 4, file should no longer be cached","depth 4, but directly from supervisor, should be depth 1","repeat but cached","direct leaf access","direct leaf access but cached","This long compute should invalidate the caches"};
         for (unsigned int i=0;i<actions.size();i++) {
 			auto const &a=actions[i];
 			std::cout<<"Action "<<a->getName()<<": "<<a->getStartDate()<<" - "<<a->getEndDate()<<", Durration: "<<a->getEndDate()-a->getStartDate()<<" Comment: "<< comments[i]<<std::endl;

@@ -67,10 +67,10 @@ int main(int argc, char **argv) {
 								 /   |   \ 	
 							Leaf7  Leaf8  Super4
 										 /   |   \ 	
-									Leaf9  Leaf10  Super11
+									Leaf9  Leaf10  Leaf11
 	        
 	*/
-	wrench::XRootD::XRootD xrootdManager(simulation);
+	wrench::XRootD::XRootD xrootdManager(simulation,{{wrench::XRootD::Property::CACHE_MAX_LIFETIME,"28800"}},{});
 	std::shared_ptr<wrench::XRootD::Node> root=xrootdManager.createSupervisor("root");
 	root->addChild(xrootdManager.createStorageServer("leaf1",{},{}));
 	root->addChild(xrootdManager.createStorageServer("leaf2",{},{}));
