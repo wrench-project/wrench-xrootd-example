@@ -19,7 +19,37 @@
 #include <iostream>
 #include <wrench/services/storage/xrootd/Node.h>
 #include "Controller.h"
-
+std::string padLong(long l){
+	
+	if(l<10){
+		return "0"+std::to_string(l);
+	}else{
+		return std::to_string(l);
+	}
+}
+std::string padDouble(double l){
+	
+	if(l<10){
+		return "0"+std::to_string(l);
+	}else{
+		return std::to_string(l);
+	}
+}
+std::string formatDate(double time){
+	if(time<0){
+		return "Not Started";
+	}
+	long seconds=(long)time;
+	double ms=time-seconds;
+	long minutes=seconds/60;
+	seconds%=60;
+	long hours=minutes/60;
+	minutes%=60;
+	int days=hours/24;
+	hours%=24;
+	
+	return std::to_string(days)+"-"+padLong(hours)+':'+padLong(minutes)+':'+padDouble(seconds+ms);
+}
 WRENCH_LOG_CATEGORY(controller, "Log category for Controller");
 
 namespace wrench {
@@ -113,7 +143,7 @@ namespace wrench {
 		auto fileread17 = job1->addFileReadAction("fileread17", files[12], root->getChild(2)->getChild(2)->getChild(2)->getChild(2));//check superviosor cached
 		auto fileread18 = job1->addFileReadAction("fileread18", files[13], root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2));//direct
 		auto fileread19 = job1->addFileReadAction("fileread19", files[13], root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2));//direct cached
-        auto compute = job1->addComputeAction("compute", 10000 * GFLOP, 50 * MBYTE, 1, 3, wrench::ParallelModel::AMDAHL(0.8));//should invalidate cache
+        auto compute = job1->addComputeAction("compute", 500 * GFLOP, 50 * MBYTE, 1, 3, wrench::ParallelModel::AMDAHL(0.8));//should invalidate cache
         job1->addActionDependency(fileread1, fileread2);
         job1->addActionDependency(fileread2, fileread3);
         job1->addActionDependency(fileread3, fileread4);
@@ -143,11 +173,19 @@ namespace wrench {
 
         WRENCH_INFO("Execution complete!");
 
-        std::vector<std::shared_ptr<wrench::Action>> actions = {fileread1, fileread2, fileread3, fileread4,fileread5,fileread6,fileread7,fileread8,fileread9,fileread10,fileread11,fileread12,fileread13,fileread14,fileread15,fileread16,fileread17,fileread18,fileread19,compute};
-		std::vector<std::string> comments={"should be fast","should be fast","depth 1 search","depth 1 search","depth 2 search","depth 2 search","depth 3 search","depth 3 search","depth 4 search","depth 4 search","depth 4 search","This file Does not exist","Depth 4, BUT cached","This action should not run","depth 4, file should no longer be cached","depth 4, but directly from supervisor, should be depth 1","repeat but cached","direct leaf access","direct leaf access but cached","This long compute should invalidate the caches"};
+        std::vector<std::shared_ptr<wrench::Action>> actions = {fileread1, fileread2, fileread3, fileread4,fileread5,fileread6,fileread7,fileread8,fileread9,fileread10,fileread11,fileread13,compute,fileread12,fileread15,fileread16,fileread17,fileread18,fileread19,fileread14};
+		std::vector<std::string> comments={"should be fast","should be fast","depth 1 search","depth 1 search","depth 2 search","depth 2 search","depth 3 search","depth 3 search","depth 4 search","depth 4 search","depth 4 search","Depth 4, BUT cached","This long compute should invalidate the caches","This file Does not exist","depth 4, file should no longer be cached","depth 4, but directly from supervisor, should be depth 1","repeat but cached","direct leaf access","direct leaf access but cached","This action should not run"};
         for (unsigned int i=0;i<actions.size();i++) {
 			auto const &a=actions[i];
-			std::cout<<"Action "<<a->getName()<<": "<<a->getStartDate()<<" - "<<a->getEndDate()<<", Durration: "<<a->getEndDate()-a->getStartDate()<<" Comment: "<< comments[i]<<std::endl;
+			std::cout<<std::right<<std::setfill(' ') 
+			<<"Action "<<std::setw(10)<<a->getName()<<": "
+			<<std::setw(17)<<formatDate(a->getStartDate())
+			<<" - "
+			<<std::setw(17)<<formatDate(a->getEndDate())
+			<<", Durration: "
+			<<std::setw(7)<<a->getEndDate()-a->getStartDate()
+			<<" Comment: "
+			<< comments[i]<<std::endl;
             //printf("Action %s: %.2fs - %.2fs, durration:%.2fs\n", a->getName().c_str(), a->getStartDate(), a->getEndDate(),a->getEndDate()-a->getStartDate());
         }
         return 0;
