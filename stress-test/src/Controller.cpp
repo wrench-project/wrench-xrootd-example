@@ -17,6 +17,7 @@
 #define GBYTE (1000.0 * 1000.0 * 1000.0)
 
 #include <iostream>
+#include <iomanip>
 #include <wrench/services/storage/xrootd/Node.h>
 #include "Controller.h"
 std::string padLong(long l){
