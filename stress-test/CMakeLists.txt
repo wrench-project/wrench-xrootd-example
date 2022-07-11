@@ -23,6 +23,7 @@ set(SOURCE_FILES
         include/Controller.h
         src/Controller.cpp
         src/Simulator.cpp
+        src/platformCreator.cpp
         )
 
 # generating the executable

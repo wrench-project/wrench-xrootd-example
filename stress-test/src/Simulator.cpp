@@ -22,6 +22,7 @@
 
 #include <wrench/services/storage/xrootd/Node.h>
 #include "Controller.h"
+#include "platformCreator.h"
 std::string to_string(bool a){
 	if(a){
 		return "true";
@@ -44,17 +45,20 @@ int main(int argc, char **argv) {
 
     /* Initialize the simulation */
     simulation->init(&argc, argv);
+	
 	bool reduced=false;
     /* Parsing of the command-line arguments */
-    if (argc <2|| argc>3) {
-        std::cerr << "Usage: " << argv[0] << " <xml platform file> (runReduced? true/false*)[--log=controller.threshold=info | --wrench-full-log]" << std::endl;
+    if (argc>3) {
+        std::cerr << "Usage: " << argv[0] << " (runReduced? true/false*)[--log=controller.threshold=info | --wrench-full-log]" << std::endl;
         exit(1);
     }
-	if(argc==3){
-		reduced=strcmp(argv[2],"true");
+	if(argc==2){
+		reduced=strcmp(argv[1],"true");
 	}
+	wrench::XRootD::XRootD xrootdManager(simulation,{{wrench::XRootD::Property::CACHE_MAX_LIFETIME,"28800"},{wrench::XRootD::Property::REDUCED_SIMULATION,to_string(reduced)}},{});
     /* Instantiating the simulated platform */
-    simulation->instantiatePlatform(argv[1]);
+	PlatformCreator platform(xrootdManager,1,1000,1000,0);
+    simulation->instantiatePlatform(platform);
 
     /* Instantiate a storage service on the platform */
     //auto storage_service = simulation->add(new wrench::SimpleStorageService("StorageHost", {"/"}, {}, {}));
@@ -79,7 +83,7 @@ int main(int argc, char **argv) {
 									Leaf9  Leaf10  Leaf11
 	        
 	*/
-	wrench::XRootD::XRootD xrootdManager(simulation,{{wrench::XRootD::Property::CACHE_MAX_LIFETIME,"28800"},{wrench::XRootD::Property::REDUCED_SIMULATION,to_string(reduced)}},{});
+	
 	std::shared_ptr<wrench::XRootD::Node> root=xrootdManager.createSupervisor("root");
 	root->addChild(xrootdManager.createStorageServer("leaf1",{},{}));
 	root->addChild(xrootdManager.createStorageServer("leaf2",{},{}));
