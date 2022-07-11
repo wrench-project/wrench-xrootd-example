@@ -245,8 +245,11 @@ void PlatformCreator::operator()() {
 			
 			}else{//go up and sideways
 				backtrack.pop();
-				routes.pop_back();
-				parrents.pop_back();
+				if(routes.size()>0){
+					routes.pop_back();
+						
+					parrents.pop_back();
+				}
 				if(!backtrack.empty()){
 					int index=backtrack.top();
 					index++;
