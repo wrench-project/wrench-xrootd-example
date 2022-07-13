@@ -11,13 +11,13 @@ struct Return{
 class PlatformCreator {
 
 public:
-    PlatformCreator(wrench::XRootD::XRootD metavisor,
+    PlatformCreator(wrench::XRootD::XRootD &metavisor,
 		double density,
 		int leafs) : metavisor(metavisor),density(density),leafs(leafs) {}
 
     void operator()() ;
 
-    wrench::XRootD::XRootD metavisor;
+    wrench::XRootD::XRootD &metavisor;
 	double density;
 	int leafs;
 	//created in init
