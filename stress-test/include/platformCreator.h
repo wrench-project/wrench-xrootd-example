@@ -3,24 +3,24 @@
 
 #include <wrench/services/storage/xrootd/XRootD.h>
 #include <wrench-dev.h>
+struct Return{
+	std::shared_ptr<wrench::XRootD::Node> root;
+	vector<std::shared_ptr<wrench::XRootD::Node>> fileServers;
+
+};
 class PlatformCreator {
 
 public:
     PlatformCreator(wrench::XRootD::XRootD metavisor,
 		double density,
-		int leafs,
-		int files,
-		double fileRedundancy) : metavisor(metavisor),density(density),leafs(leafs),files(files),fileRedundancy(fileRedundancy) {}
+		int leafs) : metavisor(metavisor),density(density),leafs(leafs) {}
 
     void operator()() ;
 
     wrench::XRootD::XRootD metavisor;
 	double density;
 	int leafs;
-	int files;
-	double fileRedundancy;
 	//created in init
-	std::shared_ptr<wrench::XRootD::Node> root;
-	vector<std::shared_ptr<wrench::DataFile>> filePointers;
+	std::shared_ptr<Return> ret;
 };
 #endif

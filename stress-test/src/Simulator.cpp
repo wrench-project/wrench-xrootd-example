@@ -38,6 +38,11 @@ std::string to_string(bool a){
  * @param argv: argument array
  * @return 0 on success, non-zero otherwise
  */
+ const int LEAFS=100;
+ const int FILES=100;
+ const double DENSITY=.75;
+ const double REDUNDANCY=.25;
+ const double FILE_SIZE=1;
 int main(int argc, char **argv) {
 
     /* Create a WRENCH simulation object */
@@ -46,18 +51,19 @@ int main(int argc, char **argv) {
     /* Initialize the simulation */
     simulation->init(&argc, argv);
 	
-	bool reduced=false;
+	std::string reduced="false";
     /* Parsing of the command-line arguments */
     if (argc>3) {
         std::cerr << "Usage: " << argv[0] << " (runReduced? true/false*)[--log=controller.threshold=info | --wrench-full-log]" << std::endl;
         exit(1);
     }
 	if(argc==2){
-		reduced=strcmp(argv[1],"true");
+		reduced=argv[1];
 	}
-	wrench::XRootD::XRootD xrootdManager(simulation,{{wrench::XRootD::Property::CACHE_MAX_LIFETIME,"28800"},{wrench::XRootD::Property::REDUCED_SIMULATION,to_string(reduced)}},{});
+	wrench::XRootD::XRootD xrootdManager(simulation,{{wrench::XRootD::Property::CACHE_MAX_LIFETIME,"28800"},{wrench::XRootD::Property::REDUCED_SIMULATION,reduced}},{});
     /* Instantiating the simulated platform */
-	PlatformCreator platform(xrootdManager,1,1000,1000,0);
+	PlatformCreator platform(xrootdManager,DENSITY,LEAFS);
+	platform.ret=make_shared<Return>();
     simulation->instantiatePlatform(platform);
 
     /* Instantiate a storage service on the platform */
@@ -67,49 +73,22 @@ int main(int argc, char **argv) {
     auto baremetal_service = simulation->add(new wrench::BareMetalComputeService("user", {"user"}, "", {}, {}));
 	simulation->add(baremetal_service);
 
-    /* Instantiate an execution controller */
+
+	vector<std::shared_ptr<wrench::DataFile>> files;
+	for(int i=0;i<FILES;i++){
+		auto file=wrench::Simulation::addFile("file"+to_string(i),FILE_SIZE);
+		files.push_back(file);
+		int copies=(int)(std::rand()/(double)((RAND_MAX + 1u)*REDUNDANCY));
+		while(copies>=0){
+			int index=std::rand()/((RAND_MAX + 1u)/FILES);
+			platform.ret->fileServers[index]->createFile(file);
+			copies--;
+		}
+	}
     
-	/*Construct XRootD tree that looks like
-		    Root
-	     /   |   \ 	
-	Leaf1  Leaf2  Super1			
-				 /   |   \ 	
-			Leaf3  Leaf4  Super2
-						 /   |   \ 	
-					Leaf5  Leaf6  Super3
-								 /   |   \ 	
-							Leaf7  Leaf8  Super4
-										 /   |   \ 	
-									Leaf9  Leaf10  Leaf11
-	        
-	*/
-	
-	std::shared_ptr<wrench::XRootD::Node> root=xrootdManager.createSupervisor("root");
-	root->addChild(xrootdManager.createStorageServer("leaf1",{},{}));
-	root->addChild(xrootdManager.createStorageServer("leaf2",{},{}));
-	std::shared_ptr<wrench::XRootD::Node> activeNode=xrootdManager.createSupervisor("super1");
-	root->addChild(activeNode);
-	activeNode->addChild(xrootdManager.createStorageServer("leaf3",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf4",{},{}));
-	std::shared_ptr<wrench::XRootD::Node> previousNode=activeNode;
-	activeNode=xrootdManager.createSupervisor("super2");
-	previousNode->addChild(activeNode);
-	activeNode->addChild(xrootdManager.createStorageServer("leaf5",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf6",{},{}));
-	previousNode=activeNode;
-	activeNode=xrootdManager.createSupervisor("super3");
-	previousNode->addChild(activeNode);
-	activeNode->addChild(xrootdManager.createStorageServer("leaf7",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf8",{},{}));
-	previousNode=activeNode;
-	activeNode=xrootdManager.createSupervisor("super4");
-	previousNode->addChild(activeNode);
-	activeNode->addChild(xrootdManager.createStorageServer("leaf9",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf10",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf11",{},{}));
 	
 	/* Launch the simulation */
-	auto controller = simulation->add(        new wrench::Controller(baremetal_service, root,&xrootdManager, "root"));
+	auto controller = simulation->add(        new wrench::Controller(baremetal_service, platform.ret->root,&xrootdManager,files, "root"));
     simulation->launch();
 
     return 0;

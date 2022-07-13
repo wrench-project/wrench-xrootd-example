@@ -20,6 +20,7 @@
 #include <iomanip>
 #include <wrench/services/storage/xrootd/Node.h>
 #include "Controller.h"
+
 std::string padLong(long l){
 	
 	if(l<10){
@@ -65,8 +66,9 @@ namespace wrench {
     Controller::Controller(std::shared_ptr<BareMetalComputeService> bare_metal_compute_service,
                            const std::shared_ptr<XRootD::Node> &root,
 						   XRootD::XRootD *xrootdManager,
+						   vector<std::shared_ptr<wrench::DataFile>> files,
                            const std::string &hostname) : ExecutionController(hostname, "controller"),
-                                                          bare_metal_compute_service(bare_metal_compute_service), root(root),xrootdManager(xrootdManager) {}
+                                                          bare_metal_compute_service(bare_metal_compute_service), root(root),xrootdManager(xrootdManager),files(files) {}
 
     /**
      * @brief main method of the Controller
@@ -81,114 +83,54 @@ namespace wrench {
         TerminalOutput::setThisProcessLoggingColor(TerminalOutput::COLOR_GREEN);
         WRENCH_INFO("Controller starting");
 
-        /* Create a files */
-        std::vector<std::shared_ptr<DataFile>> files ={ 
-			wrench::Simulation::addFile("file1", 1 ),
-			wrench::Simulation::addFile("file2", 1 ),
-			wrench::Simulation::addFile("file3", 1 ),
-			wrench::Simulation::addFile("file4", 1 ),
-			wrench::Simulation::addFile("file5", 1 ),
-			wrench::Simulation::addFile("file6", 1 ),
-			wrench::Simulation::addFile("file7", 1),
-			wrench::Simulation::addFile("file8", 1 ),
-			wrench::Simulation::addFile("file9", 1 ),
-			wrench::Simulation::addFile("file10", 1 ),
-			wrench::Simulation::addFile("file11", 1),
-			wrench::Simulation::addFile("file12", 1 ),
-			wrench::Simulation::addFile("file13", 1 ),
-			wrench::Simulation::addFile("file14", 1 ),
-		};
         
-			
-        xrootdManager->createFile(files[0], root->getChild(0));//leaf 1
-		xrootdManager->createFile(files[1], root->getChild(1));//leaf 2
-		xrootdManager->createFile(files[2], root->getChild(2)->getChild(0));//leaf 3
-		xrootdManager->createFile(files[3], root->getChild(2)->getChild(1));//leaf 4
-		root->getChild(2)->getChild(2)->getChild(0)->createFile(files[4]);//leaf 5
-		root->getChild(2)->getChild(2)->getChild(1)->createFile(files[5]);//leaf 6
-		root->getChild(2)->getChild(2)->getChild(2)->getChild(0)->createFile(files[6]);//leaf 7
-		root->getChild(2)->getChild(2)->getChild(2)->getChild(1)->createFile(files[7]);//leaf 8
-		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(0)->createFile(files[8]);//leaf 9
-		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(1)->createFile(files[9]);//leaf 10
-		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2)->createFile(files[10]);//leaf 11
-		
-		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2)->createFile(files[12]);//File for supervisor tests
-		
-		root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2)->createFile(files[13]);//File for direct tests
-	//  root  super1       super2       super3       super4       
-        /* Create a job manager so that we can create/submit jobs */
         auto job_manager = this->createJobManager();
 
         WRENCH_INFO("Creating a compound job with an assortment of file reads");
         auto job1 = job_manager->createCompoundJob("job1");
-        auto fileread1 = job1->addFileReadAction("fileread1", files[0], root);//should be fast
-		auto fileread2 = job1->addFileReadAction("fileread2", files[1], root);//should be equally fast
-		auto fileread3 = job1->addFileReadAction("fileread3", files[2], root);//depth 1 search
-		auto fileread4 = job1->addFileReadAction("fileread4", files[3], root);//depth 1 search
-		auto fileread5 = job1->addFileReadAction("fileread5", files[4], root);//depth 2 search
-		auto fileread6 = job1->addFileReadAction("fileread6", files[5], root);//depth 2 search
-		auto fileread7 = job1->addFileReadAction("fileread7", files[6], root);//depth 3 search
-		auto fileread8 = job1->addFileReadAction("fileread8", files[7], root);//depth 3 search
-		auto fileread9 = job1->addFileReadAction("fileread9", files[8], root);//depth 4 search
-		auto fileread10 = job1->addFileReadAction("fileread10", files[9], root);//depth 4 search
-		auto fileread11 = job1->addFileReadAction("fileread11", files[10], root);//depth 4 search
-		auto fileread12 = job1->addFileReadAction("fileread12", files[11], root);//this file does not exist
-		auto fileread13 = job1->addFileReadAction("fileread13", files[10], root);//depth 4 search, but cached
+		vector<std::shared_ptr<FileReadAction>> fileReads(files.size()*3);
+		for(int i=0;i<files.size();i++){//add 3 actions for each read, first uncached, then cached, then uncached again
+			fileReads[i]=job1->addFileReadAction("fileread"+to_string(i), files[i], root);
+			fileReads[i+files.size()]=job1->addFileReadAction("fileread"+to_string(i+files.size()), files[i], root);
+			fileReads[i+files.size()*2]=job1->addFileReadAction("fileread"+to_string(i+files.size()*2), files[i], root);
 		
-		
-		
-		auto fileread14 = job1->addFileReadAction("fileread14", files[11], root);//this file does not exist
-		
-		auto fileread15 = job1->addFileReadAction("fileread15", files[10], root);//depth 4 search, but no longer cached
-		auto fileread16 = job1->addFileReadAction("fileread16", files[12], root->getChild(2)->getChild(2)->getChild(2)->getChild(2));//check superviosor
-		auto fileread17 = job1->addFileReadAction("fileread17", files[12], root->getChild(2)->getChild(2)->getChild(2)->getChild(2));//check superviosor cached
-		auto fileread18 = job1->addFileReadAction("fileread18", files[13], root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2));//direct
-		auto fileread19 = job1->addFileReadAction("fileread19", files[13], root->getChild(2)->getChild(2)->getChild(2)->getChild(2)->getChild(2));//direct cached
+		}
         auto compute = job1->addComputeAction("compute", 500 * GFLOP, 50 * MBYTE, 1, 3, wrench::ParallelModel::AMDAHL(0.8));//should invalidate cache
-        job1->addActionDependency(fileread1, fileread2);
-        job1->addActionDependency(fileread2, fileread3);
-        job1->addActionDependency(fileread3, fileread4);
-        job1->addActionDependency(fileread4, fileread5);
-        job1->addActionDependency(fileread5, fileread6);
-        job1->addActionDependency(fileread6, fileread7);
-        job1->addActionDependency(fileread7, fileread8);
-        job1->addActionDependency(fileread8, fileread9);
-        job1->addActionDependency(fileread9, fileread10);
-        job1->addActionDependency(fileread10, fileread11);
-        job1->addActionDependency(fileread11, fileread13);
-		job1->addActionDependency(fileread13,compute);
-        job1->addActionDependency(compute, fileread12);
+		for(int i=0;i<files.size();i++){//each cached read depends on its own first read
+			job1->addActionDependency(fileReads[i], fileReads[i+files.size()]);
+		}
+        for(int i=0;i<files.size();i++){//the final compute depends on the second read0
+			job1->addActionDependency(fileReads[i+files.size()], compute);
+		}
+		for(int i=0;i<files.size();i++){//the 3rd read must happen after the cache invalidation
+			job1->addActionDependency(compute,fileReads[i+files.size()*2]);
+		}
 		
-        job1->addActionDependency(compute, fileread15);
-		
-        job1->addActionDependency(fileread12, fileread14);//this task should never start
-        
-		
-        job1->addActionDependency(fileread15, fileread16);
-        job1->addActionDependency(fileread16, fileread17);
-        job1->addActionDependency(fileread17, fileread18);
-		
-        job1->addActionDependency(fileread18, fileread19);
         job_manager->submitJob(job1, this->bare_metal_compute_service);
         this->waitForAndProcessNextEvent();
 
         WRENCH_INFO("Execution complete!");
 
-        std::vector<std::shared_ptr<wrench::Action>> actions = {fileread1, fileread2, fileread3, fileread4,fileread5,fileread6,fileread7,fileread8,fileread9,fileread10,fileread11,fileread13,compute,fileread12,fileread15,fileread16,fileread17,fileread18,fileread19,fileread14};
-		std::vector<std::string> comments={"should be fast","should be fast","depth 1 search","depth 1 search","depth 2 search","depth 2 search","depth 3 search","depth 3 search","depth 4 search","depth 4 search","depth 4 search","Depth 4, BUT cached","This long compute should invalidate the caches","This file Does not exist","depth 4, file should no longer be cached","depth 4, but directly from supervisor, should be depth 1","repeat but cached","direct leaf access","direct leaf access but cached","This action should not run"};
-        for (unsigned int i=0;i<actions.size();i++) {
-			auto const &a=actions[i];
-			std::cout<<std::right<<std::setfill(' ') 
-			<<"Action "<<std::setw(10)<<a->getName()<<": "
-			<<std::setw(17)<<formatDate(a->getStartDate())
-			<<" - "
-			<<std::setw(17)<<formatDate(a->getEndDate())
-			<<", Durration: "
-			<<std::setw(7)<<a->getEndDate()-a->getStartDate()
-			<<" Comment: "
-			<< comments[i]<<std::endl;
+        
+		for (unsigned int i=0;i<fileReads.size();i++) {
+			auto const &a=fileReads[i];
+			std::cout<<std::right<<std::setfill(' ')<<
+			"Action "<<std::setw(10)<<a->getName()<<": "<<
+			std::setw(17)<<formatDate(a->getStartDate())<<" - "<<
+			std::setw(17)<<formatDate(a->getEndDate())<<
+			", Durration: "<<
+			std::setw(7)<<a->getEndDate()-a->getStartDate()<<
+			std::endl;
             //printf("Action %s: %.2fs - %.2fs, durration:%.2fs\n", a->getName().c_str(), a->getStartDate(), a->getEndDate(),a->getEndDate()-a->getStartDate());
         }
+		auto const &a=compute;
+			std::cout<<std::right<<std::setfill(' ')<<
+			"Action "<<std::setw(10)<<a->getName()<<": "<<
+			std::setw(17)<<formatDate(a->getStartDate())<<" - "<<
+			std::setw(17)<<formatDate(a->getEndDate())<<
+			", Durration: "<<
+			std::setw(7)<<a->getEndDate()-a->getStartDate()<<
+			std::endl;
         return 0;
     }
 

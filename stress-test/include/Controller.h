@@ -27,7 +27,7 @@ namespace wrench {
         Controller(
 				const std::shared_ptr<BareMetalComputeService> bare_metal_compute_service,
                 const std::shared_ptr<wrench::XRootD::Node> &storage_service,
-				XRootD::XRootD *xrootdManager,
+				XRootD::XRootD *xrootdManager,vector<std::shared_ptr<wrench::DataFile>> files,
                 const std::string &hostname);
 
     protected:
@@ -41,6 +41,7 @@ namespace wrench {
         const std::shared_ptr<BareMetalComputeService> bare_metal_compute_service;
         const std::shared_ptr<wrench::XRootD::Node> root;
 		XRootD::XRootD *xrootdManager;
+		vector<shared_ptr<wrench::DataFile>>files;
     };
 }// namespace wrench
 #endif//CONTROLLER_H

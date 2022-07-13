@@ -24,7 +24,6 @@ void PlatformCreator::operator()() {
         auto user = zone->create_host("user", "1Gf");
         user->set_core_count(10);
         user->set_property("ram", "16GB");
-		vector<std::shared_ptr<wrench::XRootD::Node>> fileServers;
 		std::srand(std::time(nullptr));
 		//create graph
 		Tree tRoot;
@@ -102,8 +101,8 @@ void PlatformCreator::operator()() {
                             {network_link_in_route});
                            
                     }
-		root=metavisor.createSupervisor("root");			
-		auto currentNode=root.get();
+		ret->root=metavisor.createSupervisor("root");			
+		auto currentNode=ret->root.get();
 		int superCount=0;
 		int leafCount=0;
 		
@@ -235,7 +234,7 @@ void PlatformCreator::operator()() {
 						routes.pop_back();
 						auto next=metavisor.createStorageServer("leaf"+to_string(leafCount),{},{});
 					currentNode->addChild(next);
-					fileServers.push_back(next);
+					ret->fileServers.push_back(next);
 					
 					index++;
 					backtrack.pop();
@@ -260,9 +259,6 @@ void PlatformCreator::operator()() {
 				}
 			}
 		}
-		if(routes.size()>0){
-			cout<<"Error in routes"<<endl;
-		}
-       
+
         zone->seal();
     }
