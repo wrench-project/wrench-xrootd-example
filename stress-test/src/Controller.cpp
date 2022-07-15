@@ -20,6 +20,9 @@
 #include <iomanip>
 #include <wrench/services/storage/xrootd/Node.h>
 #include "Controller.h"
+#include <iostream>
+#include <chrono>
+#include <ctime>    
 
 std::string padLong(long l){
 	
@@ -96,6 +99,9 @@ namespace wrench {
 		
 		}
         auto compute = job1->addComputeAction("compute", 500 * GFLOP, 50 * MBYTE, 1, 3, wrench::ParallelModel::AMDAHL(0.8));//should invalidate cache
+		for(int i=0;i<files.size()*3-1;i++){//each read depends on the previous
+			job1->addActionDependency(fileReads[i], fileReads[i+1]);
+		}
 		for(int i=0;i<files.size();i++){//each cached read depends on its own first read
 			job1->addActionDependency(fileReads[i], fileReads[i+files.size()]);
 		}
@@ -107,8 +113,12 @@ namespace wrench {
 		}
 		
         job_manager->submitJob(job1, this->bare_metal_compute_service);
-        this->waitForAndProcessNextEvent();
+		cout<<"initilization finished"<<endl;
+		 auto start = std::chrono::system_clock::now();
 
+        this->waitForAndProcessNextEvent();
+		// Some computation here
+		auto end = std::chrono::system_clock::now();
         WRENCH_INFO("Execution complete!");
 
         
@@ -124,13 +134,14 @@ namespace wrench {
             //printf("Action %s: %.2fs - %.2fs, durration:%.2fs\n", a->getName().c_str(), a->getStartDate(), a->getEndDate(),a->getEndDate()-a->getStartDate());
         }
 		auto const &a=compute;
-			std::cout<<std::right<<std::setfill(' ')<<
-			"Action "<<std::setw(10)<<a->getName()<<": "<<
-			std::setw(17)<<formatDate(a->getStartDate())<<" - "<<
-			std::setw(17)<<formatDate(a->getEndDate())<<
-			", Durration: "<<
-			std::setw(7)<<a->getEndDate()-a->getStartDate()<<
-			std::endl;
+		std::cout<<std::right<<std::setfill(' ')<<
+		"Action "<<std::setw(10)<<a->getName()<<": "<<
+		std::setw(17)<<formatDate(a->getStartDate())<<" - "<<
+		std::setw(17)<<formatDate(a->getEndDate())<<
+		", Durration: "<<
+		std::setw(7)<<a->getEndDate()-a->getStartDate()<<
+		std::endl;
+		cout<<"Real time taken: "<<formatDate(( std::chrono::duration_cast< std::chrono::milliseconds>(end-start)).count()/1000.0) <<endl;
         return 0;
     }
 

@@ -38,11 +38,11 @@ std::string to_string(bool a){
  * @param argv: argument array
  * @return 0 on success, non-zero otherwise
  */
- const int LEAFS=100;
- const int FILES=100;
+ int LEAFS=100;
+ int FILES=100;
  const double DENSITY=.75;
  const double REDUNDANCY=.25;
- const double FILE_SIZE=1;
+ const double FILE_SIZE=100000000;
 int main(int argc, char **argv) {
 
     /* Create a WRENCH simulation object */
@@ -53,12 +53,14 @@ int main(int argc, char **argv) {
 	
 	std::string reduced="false";
     /* Parsing of the command-line arguments */
-    if (argc>3) {
-        std::cerr << "Usage: " << argv[0] << " (runReduced? true/false*)[--log=controller.threshold=info | --wrench-full-log]" << std::endl;
+    if (argc<1||argc>4) {
+        std::cerr << "Usage: " << argv[0] << " [size] (runReduced? true/false*)[--log=controller.threshold=info | --wrench-full-log]" << std::endl;
         exit(1);
     }
-	if(argc==2){
-		reduced=argv[1];
+	LEAFS=atoi(argv[1]);
+	FILES=LEAFS;
+	if(argc==3){
+		reduced=argv[2];
 	}
 	wrench::XRootD::XRootD xrootdManager(simulation,{{wrench::XRootD::Property::CACHE_MAX_LIFETIME,"28800"},{wrench::XRootD::Property::REDUCED_SIMULATION,reduced}},{});
     /* Instantiating the simulated platform */
@@ -78,9 +80,10 @@ int main(int argc, char **argv) {
 	for(int i=0;i<FILES;i++){
 		auto file=wrench::Simulation::addFile("file"+to_string(i),FILE_SIZE);
 		files.push_back(file);
-		int copies=(int)(std::rand()/(double)((RAND_MAX + 1u)*REDUNDANCY));
+		double copies=((std::rand()/(double)(RAND_MAX + 1u))*REDUNDANCY);
+		//cout<<copies<<endl;
 		while(copies>=0){
-			int index=std::rand()/((RAND_MAX + 1u)/FILES);
+			int index=std::rand()/((RAND_MAX + 1u)/platform.ret->fileServers.size());
 			platform.ret->fileServers[index]->createFile(file);
 			copies--;
 		}
@@ -89,6 +92,7 @@ int main(int argc, char **argv) {
 	
 	/* Launch the simulation */
 	auto controller = simulation->add(        new wrench::Controller(baremetal_service, platform.ret->root,&xrootdManager,files, "root"));
+	
     simulation->launch();
 
     return 0;

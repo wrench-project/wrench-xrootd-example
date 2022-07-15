@@ -7,7 +7,12 @@
 #include <wrench/services/storage/xrootd/XRootD.h>
 
 #include <wrench/services/storage/xrootd/Node.h>
+
 using namespace std;
+const string NETWORK_SPEED="1GBps";
+const string CPU_SPEED="1Gf";
+const string NETWORK_LATENCY="10ms";
+
 namespace sg4 = simgrid::s4u;
 struct Tree{
 	vector<std::shared_ptr<Tree>> children;
@@ -19,9 +24,9 @@ void PlatformCreator::operator()() {
         // Create the top-level zone
         auto zone = sg4::create_full_zone("AS0");
         auto loopback = zone->create_link("loopback", "1000EBps")->set_latency("0us")-> set_sharing_policy(sg4::Link::SharingPolicy::FATPIPE)->seal();
-        auto fatpipe = zone->create_link("fatpipe", "1000EBps")-> set_sharing_policy(sg4::Link::SharingPolicy::FATPIPE)->set_latency("0us")->seal();
+        auto fatpipe = zone->create_link("fatpipe", "300MBps")-> set_sharing_policy(sg4::Link::SharingPolicy::FATPIPE)->set_latency("100ms")->seal();
                 // Create a ComputeHost
-        auto user = zone->create_host("user", "1Gf");
+        auto user = zone->create_host("user", "1Mf");
         user->set_core_count(10);
         user->set_property("ram", "16GB");
 		std::srand(std::time(nullptr));
@@ -76,7 +81,7 @@ void PlatformCreator::operator()() {
 		
 		auto current=&tRoot;
 		
-		 tRoot.host = zone->create_host("root", "1Gf");
+		 tRoot.host = zone->create_host("root", "1Mf");
 					tRoot.host->set_core_count(10);
 					tRoot.host->set_property("ram", "16GB");
 
@@ -121,7 +126,7 @@ void PlatformCreator::operator()() {
 					
 					++superCount;
 					// Create a ComputeHost
-					auto compute_host = zone->create_host("super"+to_string(superCount), "1Gf");
+					auto compute_host = zone->create_host("super"+to_string(superCount), CPU_SPEED);
 					compute_host->set_core_count(10);
 					compute_host->set_property("ram", "16GB");
 
@@ -150,7 +155,7 @@ void PlatformCreator::operator()() {
                   current->children[index]->host=compute_host;
 					{
 						//add parrent routes
-						 auto treenet = zone->create_link("link"+to_string(linkCount++), "1000EBps")->set_latency("0us")->seal();
+						 auto treenet = zone->create_link("link"+to_string(linkCount++), NETWORK_SPEED)->set_latency(NETWORK_LATENCY)->seal();
 						sg4::LinkInRoute newLink{treenet};
 						if(routes.size()>0){
 							std::vector<sg4::LinkInRoute> tmp=routes[routes.size()-1];
@@ -180,7 +185,7 @@ void PlatformCreator::operator()() {
 					
 					++leafCount;
 					// Create the WMSHost host with its disk
-					auto wms_host = zone->create_host("leaf"+to_string(leafCount), "10Gf");
+					auto wms_host = zone->create_host("leaf"+to_string(leafCount), CPU_SPEED);
 					wms_host->set_core_count(1);
 					auto wms_host_disk = wms_host->create_disk("hard_drive",
 						                                       "100MBps",
@@ -212,7 +217,7 @@ void PlatformCreator::operator()() {
 					current->children[index]->host=wms_host;
 					{
 						//add parrent routes
-						 auto treenet = zone->create_link("link"+to_string(linkCount++), "1000EBps")->set_latency("0us")->seal();
+						 auto treenet = zone->create_link("link"+to_string(linkCount++), NETWORK_SPEED)->set_latency(NETWORK_LATENCY)->seal();
 						sg4::LinkInRoute newLink{treenet};
 						if(routes.size()>0){
 							std::vector<sg4::LinkInRoute> tmp=routes[routes.size()-1];
