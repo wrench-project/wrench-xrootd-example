@@ -42,7 +42,7 @@ std::string to_string(bool a){
  int FILES=100;
  const double DENSITY=.75;
  const double REDUNDANCY=.25;
- const double FILE_SIZE=100000000;
+ const double FILE_SIZE=1;
 int main(int argc, char **argv) {
 
     /* Create a WRENCH simulation object */
