@@ -237,7 +237,7 @@ void PlatformCreator::operator()() {
 						}
 						
 						routes.pop_back();
-						auto next=metavisor.createStorageServer("leaf"+to_string(leafCount),{},{});
+						auto next=metavisor.createStorageServer("leaf"+to_string(leafCount),"/",{},{});
 					currentNode->addChild(next);
 					ret->fileServers.push_back(next);
 					

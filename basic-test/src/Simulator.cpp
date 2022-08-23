@@ -81,28 +81,28 @@ int main(int argc, char **argv) {
 	*/
 	wrench::XRootD::XRootD xrootdManager(simulation,{{wrench::XRootD::Property::CACHE_MAX_LIFETIME,"28800"},{wrench::XRootD::Property::REDUCED_SIMULATION,to_string(reduced)}},{});
 	std::shared_ptr<wrench::XRootD::Node> root=xrootdManager.createSupervisor("root");
-	root->addChild(xrootdManager.createStorageServer("leaf1",{},{}));
-	root->addChild(xrootdManager.createStorageServer("leaf2",{},{}));
+	root->addChild(xrootdManager.createStorageServer("leaf1","/",{},{}));
+	root->addChild(xrootdManager.createStorageServer("leaf2","/",{},{}));
 	std::shared_ptr<wrench::XRootD::Node> activeNode=xrootdManager.createSupervisor("super1");
 	root->addChild(activeNode);
-	activeNode->addChild(xrootdManager.createStorageServer("leaf3",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf4",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf3","/",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf4","/",{},{}));
 	std::shared_ptr<wrench::XRootD::Node> previousNode=activeNode;
 	activeNode=xrootdManager.createSupervisor("super2");
 	previousNode->addChild(activeNode);
-	activeNode->addChild(xrootdManager.createStorageServer("leaf5",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf6",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf5","/",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf6","/",{},{}));
 	previousNode=activeNode;
 	activeNode=xrootdManager.createSupervisor("super3");
 	previousNode->addChild(activeNode);
-	activeNode->addChild(xrootdManager.createStorageServer("leaf7",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf8",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf7","/",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf8","/",{},{}));
 	previousNode=activeNode;
 	activeNode=xrootdManager.createSupervisor("super4");
 	previousNode->addChild(activeNode);
-	activeNode->addChild(xrootdManager.createStorageServer("leaf9",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf10",{},{}));
-	activeNode->addChild(xrootdManager.createStorageServer("leaf11",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf9","/",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf10","/",{},{}));
+	activeNode->addChild(xrootdManager.createStorageServer("leaf11","/",{},{}));
 	
 	/* Launch the simulation */
 	auto controller = simulation->add(        new wrench::Controller(baremetal_service, root,&xrootdManager, "root"));
